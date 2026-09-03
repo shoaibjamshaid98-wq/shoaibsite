@@ -1,0 +1,1804 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Best Movies — Top 60 by Genre</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0b0c10;
+    --panel:#15171c;
+    --panel-2:#1b1e25;
+    --gold:#e8b34c;
+    --gold-dim:#a9803a;
+    --velvet:#7a1620;
+    --velvet-bright:#a3212d;
+    --text:#ede9e0;
+    --text-dim:#93969d;
+    --line:#2a2d35;
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0;}
+
+  html{scroll-behavior:smooth;}
+
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Work Sans', sans-serif;
+    overflow-x:hidden;
+    position:relative;
+  }
+
+  body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    z-index:999;
+    opacity:.05;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    mix-blend-mode:overlay;
+  }
+
+  a{color:inherit;text-decoration:none;}
+
+  .hero{
+    position:relative;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:6vh 5vw 8vh;
+    overflow:hidden;
+  }
+
+  .hero::before{
+    content:"";
+    position:absolute; top:0; left:0; bottom:0; width:22vw;
+    background:linear-gradient(90deg,#000 0%, var(--velvet) 40%, transparent 100%);
+    opacity:.55;
+    filter:blur(2px);
+  }
+  .hero::after{
+    content:"";
+    position:absolute; top:0; right:0; bottom:0; width:22vw;
+    background:linear-gradient(270deg,#000 0%, var(--velvet) 40%, transparent 100%);
+    opacity:.55;
+    filter:blur(2px);
+  }
+
+  .spotlight{
+    position:absolute;
+    top:-20%;
+    left:50%;
+    width:140vw;
+    height:140vw;
+    transform:translateX(-50%);
+    background:radial-gradient(circle at 50% 0%, rgba(232,179,76,0.16), rgba(232,179,76,0) 45%);
+    pointer-events:none;
+  }
+
+  .eyebrow{
+    font-family:'Space Mono', monospace;
+    letter-spacing:.35em;
+    font-size:.68rem;
+    color:var(--gold-dim);
+    text-transform:uppercase;
+    margin-bottom:1.4rem;
+    z-index:2;
+  }
+
+  .title{
+    font-family:'Bebas Neue', sans-serif;
+    font-size:clamp(3.2rem, 12vw, 8rem);
+    line-height:.92;
+    letter-spacing:.02em;
+    color:var(--text);
+    text-shadow:0 0 40px rgba(232,179,76,.25);
+    z-index:2;
+  }
+  .title span{ color:var(--gold); }
+
+  .tagline{
+    max-width:34rem;
+    margin:1.4rem auto 0;
+    color:var(--text-dim);
+    font-size:1.02rem;
+    line-height:1.6;
+    z-index:2;
+  }
+
+  .filmstrip{
+    width:min(560px, 80vw);
+    height:22px;
+    margin:2.6rem auto 2.8rem;
+    background-image:
+      radial-gradient(circle, var(--bg) 3.5px, transparent 3.6px),
+      radial-gradient(circle, var(--bg) 3.5px, transparent 3.6px);
+    background-position: 0 3px, 0 calc(100% - 3px);
+    background-size: 22px 10px;
+    background-repeat:repeat-x;
+    background-color:var(--gold-dim);
+    opacity:.6;
+    z-index:2;
+  }
+
+  .genres{
+    display:flex;
+    flex-wrap:wrap;
+    gap:1rem;
+    justify-content:center;
+    z-index:2;
+    max-width:64rem;
+  }
+
+  .genre-btn{
+    --accent:var(--gold);
+    position:relative;
+    display:flex;
+    align-items:center;
+    gap:.65rem;
+    background:var(--panel);
+    border:1px solid var(--line);
+    color:var(--text);
+    font-family:'Work Sans', sans-serif;
+    font-weight:600;
+    font-size:1rem;
+    letter-spacing:.02em;
+    padding:1rem 1.6rem;
+    border-radius:3px;
+    cursor:pointer;
+    transition:transform .25s ease, border-color .25s ease, box-shadow .25s ease, background .25s ease;
+  }
+  .genre-btn svg{
+    width:20px; height:20px;
+    flex-shrink:0;
+    stroke:var(--accent);
+    transition:stroke .25s ease;
+  }
+  .genre-btn:hover, .genre-btn:focus-visible{
+    transform:translateY(-3px);
+    border-color:var(--accent);
+    box-shadow:0 10px 30px -12px rgba(0,0,0,.6), 0 0 0 1px var(--accent) inset;
+    background:var(--panel-2);
+    outline:none;
+  }
+  .genre-btn.active{
+    background:var(--accent);
+    color:#141414;
+    border-color:var(--accent);
+  }
+  .genre-btn.active svg{ stroke:#141414; }
+
+  .genre-btn[data-genre="action"]{ --accent:#d1533a; }
+  .genre-btn[data-genre="scifi"]{ --accent:#4ea8c9; }
+  .genre-btn[data-genre="drama"]{ --accent:#b48ee0; }
+  .genre-btn[data-genre="romance"]{ --accent:#e0688f; }
+  .genre-btn[data-genre="watchlist"]{ --accent:var(--velvet-bright); }
+
+  .scroll-cue{
+    position:relative;
+    bottom:auto;
+    left:auto;
+    transform:none;
+    font-family:'Space Mono', monospace;
+    font-size:.65rem;
+    letter-spacing:.3em;
+    color:var(--text-dim);
+    text-transform:uppercase;
+    z-index:2;
+    margin-top:2.2rem;
+  }
+
+  .search-wrap{
+    position:relative;
+    width:min(480px, 88vw);
+    margin:1.1rem auto 0;
+    z-index:2;
+  }
+  .search-icon{
+    position:absolute;
+    left:1rem;
+    top:50%;
+    transform:translateY(-50%);
+    width:18px; height:18px;
+    color:var(--text-dim);
+    pointer-events:none;
+  }
+  .search-input{
+    width:100%;
+    background:var(--panel);
+    border:1px solid var(--line);
+    color:var(--text);
+    font-family:'Work Sans', sans-serif;
+    font-size:.95rem;
+    padding:.85rem 1rem .85rem 2.7rem;
+    border-radius:3px;
+    outline:none;
+    transition:border-color .2s ease, box-shadow .2s ease;
+  }
+  .search-input::placeholder{ color:var(--text-dim); }
+  .search-input:focus{
+    border-color:var(--gold);
+    box-shadow:0 0 0 1px var(--gold) inset;
+  }
+
+  .results{
+    position:relative;
+    max-width:1180px;
+    margin:0 auto;
+    padding:5vh 5vw 10vh;
+    min-height:40vh;
+  }
+
+  .results-head{
+    display:flex;
+    align-items:baseline;
+    gap:1rem;
+    flex-wrap:wrap;
+    margin-bottom:2.4rem;
+    border-bottom:1px solid var(--line);
+    padding-bottom:1.2rem;
+  }
+
+  .results-head .label{
+    font-family:'Space Mono', monospace;
+    font-size:.7rem;
+    letter-spacing:.3em;
+    color:var(--gold-dim);
+    text-transform:uppercase;
+  }
+
+  .results-head h2{
+    font-family:'Bebas Neue', sans-serif;
+    font-size:clamp(2rem, 5vw, 3.2rem);
+    letter-spacing:.02em;
+  }
+
+  .results-head .count{
+    margin-left:auto;
+    color:var(--text-dim);
+    font-family:'Space Mono', monospace;
+    font-size:.85rem;
+  }
+
+  .placeholder{
+    color:var(--text-dim);
+    font-size:.95rem;
+    padding:2rem 0;
+  }
+
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(320px, 1fr));
+    gap:1.4rem;
+  }
+
+  .ticket{
+    position:relative;
+    display:flex;
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:4px;
+    overflow:hidden;
+    opacity:0;
+    transform:translateY(14px);
+    animation:rise .5s ease forwards;
+  }
+  @keyframes rise{ to{ opacity:1; transform:translateY(0);} }
+
+  .ticket .poster{
+    position:relative;
+    width:104px;
+    min-height:100%;
+    flex-shrink:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+  }
+  .ticket .poster::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:linear-gradient(180deg, rgba(0,0,0,0) 55%, rgba(0,0,0,.45) 100%);
+  }
+  .ticket .poster::after{
+    content:"";
+    position:absolute;
+    top:0; right:-1px; bottom:0;
+    width:1px;
+    background-image:linear-gradient(var(--bg) 50%, transparent 0%);
+    background-size:1px 10px;
+    background-repeat:repeat-y;
+    z-index:2;
+  }
+  .poster-initial{
+    font-family:'Bebas Neue', sans-serif;
+    font-size:2.6rem;
+    color:rgba(255,255,255,.82);
+    text-shadow:0 2px 14px rgba(0,0,0,.5);
+    z-index:1;
+  }
+  .rank-badge{
+    position:absolute;
+    top:7px; left:7px;
+    background:rgba(11,12,16,.75);
+    border:1px solid var(--gold-dim);
+    color:var(--gold);
+    font-family:'Space Mono', monospace;
+    font-weight:700;
+    font-size:.72rem;
+    padding:.1rem .38rem;
+    border-radius:2px;
+    z-index:3;
+  }
+
+  .ticket .body{
+    flex:1;
+    padding:1.1rem 1.3rem;
+    display:flex;
+    flex-direction:column;
+    gap:.55rem;
+  }
+
+  .ticket .top-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:.6rem;
+  }
+
+  .ticket h3{
+    font-family:'Bebas Neue', sans-serif;
+    font-size:1.35rem;
+    letter-spacing:.01em;
+    line-height:1.1;
+  }
+
+  .ticket .year{
+    font-family:'Space Mono', monospace;
+    font-size:.72rem;
+    color:var(--text-dim);
+    white-space:nowrap;
+  }
+
+  .rating{
+    display:inline-flex;
+    align-items:center;
+    gap:.35rem;
+    align-self:flex-start;
+    background:rgba(232,179,76,.1);
+    border:1px solid var(--gold-dim);
+    color:var(--gold);
+    font-family:'Space Mono', monospace;
+    font-size:.78rem;
+    font-weight:700;
+    padding:.2rem .5rem;
+    border-radius:2px;
+  }
+  .rating svg{ width:12px; height:12px; fill:var(--gold); }
+
+  .ticket .note{
+    color:var(--text-dim);
+    font-size:.85rem;
+    line-height:1.5;
+  }
+
+  .ticket:hover{
+    border-color:var(--gold-dim);
+    box-shadow:0 14px 34px -18px rgba(0,0,0,.7);
+  }
+
+  .link-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:.5rem;
+    margin-top:auto;
+    padding-top:.3rem;
+  }
+
+  .link-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:.4rem;
+    font-family:'Space Mono', monospace;
+    font-size:.7rem;
+    letter-spacing:.05em;
+    text-transform:uppercase;
+    padding:.42rem .65rem;
+    border-radius:2px;
+    border:1px solid var(--line);
+    color:var(--text-dim);
+    background:var(--panel-2);
+    transition:border-color .2s ease, color .2s ease, background .2s ease;
+  }
+  .link-btn svg{ width:13px; height:13px; flex-shrink:0; }
+
+  .link-btn.trailer:hover{
+    border-color:var(--velvet-bright);
+    color:#f3c9cd;
+    background:rgba(163,33,45,.15);
+  }
+  .link-btn.imdb:hover{
+    border-color:var(--gold);
+    color:var(--gold);
+    background:rgba(232,179,76,.1);
+  }
+  .link-btn.watch:hover{
+    border-color:#4ea8c9;
+    color:#a9dcef;
+    background:rgba(78,168,201,.12);
+  }
+
+  footer{
+    text-align:center;
+    padding:2.6rem 1rem 3.4rem;
+    color:var(--text-dim);
+    font-family:'Space Mono', monospace;
+    font-size:.72rem;
+    letter-spacing:.15em;
+    text-transform:uppercase;
+    border-top:1px solid var(--line);
+  }
+
+  /* ---------- sticky mini nav ---------- */
+  .mini-nav{
+    position:fixed;
+    top:0; left:0; right:0;
+    z-index:100;
+    display:flex;
+    align-items:center;
+    gap:1rem;
+    padding:.65rem 5vw;
+    padding-right:calc(5vw + 130px);
+    background:rgba(11,12,16,.88);
+    backdrop-filter:blur(10px);
+    -webkit-backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+    transform:translateY(-100%);
+    transition:transform .35s ease;
+  }
+  .mini-nav.visible{ transform:translateY(0); }
+  .mini-title{
+    font-family:'Bebas Neue', sans-serif;
+    font-size:1.15rem;
+    letter-spacing:.03em;
+    color:var(--gold);
+    white-space:nowrap;
+    background:none;
+    border:none;
+    cursor:pointer;
+    padding:0;
+  }
+  .mini-genres{
+    display:flex;
+    gap:.4rem;
+    flex-wrap:wrap;
+    flex:1;
+  }
+  .mini-btn{
+    background:transparent;
+    border:1px solid var(--line);
+    color:var(--text-dim);
+    font-family:'Work Sans', sans-serif;
+    font-size:.78rem;
+    font-weight:600;
+    padding:.4rem .8rem;
+    border-radius:20px;
+    cursor:pointer;
+    transition:border-color .2s ease, color .2s ease, background .2s ease;
+  }
+  .mini-btn:hover, .mini-btn:focus-visible{ border-color:var(--gold-dim); color:var(--text); outline:none; }
+  .mini-btn.active{ background:var(--gold); border-color:var(--gold); color:#141414; }
+  .mini-watchlist-btn{
+    margin-left:auto;
+    display:inline-flex;
+    align-items:center;
+    gap:.4rem;
+    background:transparent;
+    border:1px solid var(--line);
+    color:var(--text-dim);
+    font-family:'Space Mono', monospace;
+    font-size:.72rem;
+    padding:.4rem .75rem;
+    border-radius:20px;
+    cursor:pointer;
+    white-space:nowrap;
+    transition:border-color .2s ease, color .2s ease;
+  }
+  .mini-watchlist-btn:hover, .mini-watchlist-btn:focus-visible{ border-color:var(--velvet-bright); color:#f3c9cd; outline:none; }
+  .mini-watchlist-btn svg{ width:14px; height:14px; }
+
+  /* ---------- hero action row ---------- */
+  .hero-actions{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:.7rem;
+    margin-top:1.1rem;
+    flex-wrap:wrap;
+    z-index:2;
+  }
+  .hero-actions .search-wrap{ margin:0; }
+  .surprise-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:.5rem;
+    background:transparent;
+    border:1px solid var(--gold-dim);
+    color:var(--gold);
+    font-family:'Space Mono', monospace;
+    font-size:.75rem;
+    letter-spacing:.05em;
+    text-transform:uppercase;
+    padding:.85rem 1.1rem;
+    border-radius:3px;
+    cursor:pointer;
+    white-space:nowrap;
+    transition:background .2s ease, transform .2s ease, box-shadow .2s ease;
+  }
+  .surprise-btn svg{ width:16px; height:16px; transition:transform .5s ease; }
+  .surprise-btn:hover, .surprise-btn:focus-visible{
+    background:rgba(232,179,76,.1);
+    transform:translateY(-2px);
+    outline:none;
+    box-shadow:0 8px 22px -12px rgba(0,0,0,.6);
+  }
+  .surprise-btn.spinning svg{ transform:rotate(360deg); }
+
+  .genre-btn .wl-count{
+    font-family:'Space Mono', monospace;
+    font-size:.68rem;
+    color:var(--gold);
+    background:rgba(232,179,76,.12);
+    border:1px solid var(--gold-dim);
+    padding:.05rem .38rem;
+    border-radius:10px;
+  }
+  .genre-btn.active .wl-count{ color:#141414; background:rgba(20,20,20,.18); border-color:transparent; }
+
+  /* ---------- results toolbar / sort ---------- */
+  .results-head{ align-items:center; }
+  .sort-control{
+    display:inline-flex;
+    gap:.2rem;
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:20px;
+    padding:.22rem;
+  }
+  .sort-btn{
+    background:transparent;
+    border:none;
+    color:var(--text-dim);
+    font-family:'Space Mono', monospace;
+    font-size:.68rem;
+    letter-spacing:.03em;
+    text-transform:uppercase;
+    padding:.38rem .7rem;
+    border-radius:16px;
+    cursor:pointer;
+    transition:background .2s ease, color .2s ease;
+  }
+  .sort-btn:hover, .sort-btn:focus-visible{ color:var(--text); outline:none; }
+  .sort-btn.active{ background:var(--gold); color:#141414; font-weight:700; }
+
+  /* ---------- watchlist heart on cards ---------- */
+  .heart-btn{
+    position:absolute;
+    top:7px; left:71px;
+    z-index:3;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    width:26px; height:26px;
+    background:rgba(11,12,16,.75);
+    border:1px solid var(--gold-dim);
+    border-radius:50%;
+    cursor:pointer;
+    transition:border-color .2s ease, transform .15s ease;
+  }
+  .heart-btn svg{
+    width:13px; height:13px;
+    stroke:var(--text);
+    fill:none;
+    stroke-width:2;
+    transition:fill .15s ease, stroke .15s ease;
+  }
+  .heart-btn:hover, .heart-btn:focus-visible{ border-color:var(--velvet-bright); outline:none; transform:scale(1.08); }
+  .heart-btn.active svg{ fill:var(--velvet-bright); stroke:var(--velvet-bright); }
+  .heart-btn.pulse{ animation:heartPulse .35s ease; }
+  @keyframes heartPulse{ 0%{transform:scale(1);} 45%{transform:scale(1.3);} 100%{transform:scale(1);} }
+  .ticket.highlight{ animation:highlightGlow 1.6s ease; }
+  @keyframes highlightGlow{
+    0%{ box-shadow:0 0 0 2px var(--gold), 0 14px 34px -18px rgba(0,0,0,.7); }
+    100%{ box-shadow:0 14px 34px -18px rgba(0,0,0,.7); }
+  }
+
+  /* ---------- toast ---------- */
+  .toast{
+    position:fixed;
+    left:50%;
+    bottom:1.6rem;
+    transform:translate(-50%, 20px);
+    display:flex;
+    align-items:center;
+    gap:.6rem;
+    background:var(--panel-2);
+    border:1px solid var(--gold-dim);
+    color:var(--text);
+    font-size:.85rem;
+    padding:.7rem 1.1rem;
+    border-radius:4px;
+    box-shadow:0 14px 34px -12px rgba(0,0,0,.7);
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .25s ease, transform .25s ease;
+    z-index:200;
+  }
+  .toast.visible{ opacity:1; transform:translate(-50%, 0); }
+  .toast svg{ width:16px; height:16px; stroke:var(--gold); flex-shrink:0; }
+
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    .ticket{animation:none; opacity:1; transform:none;}
+    .genre-btn, .genre-btn:hover{transition:none;}
+    .heart-btn.pulse{animation:none;}
+    .ticket.highlight{animation:none;}
+    .surprise-btn.spinning svg{transition:none;}
+    .mini-nav{transition:none;}
+  }
+
+  @media (max-width:560px){
+    .hero{padding:8vh 6vw 10vh;}
+    .genres{gap:.7rem;}
+    .genre-btn{padding:.85rem 1.1rem; font-size:.9rem;}
+    .link-row{flex-direction:column;}
+    .hero-actions{flex-direction:column; width:100%;}
+    .hero-actions .search-wrap, .surprise-btn{width:min(480px, 88vw);}
+    .surprise-btn{justify-content:center;}
+    .mini-nav{flex-wrap:wrap; padding:.6rem 4vw;}
+    .mini-genres{order:3; width:100%;}
+    .results-head{gap:.7rem;}
+    .sort-control{width:100%; justify-content:space-between;}
+  }
+
+  /* ---------- account corner ---------- */
+  .account-corner{
+    position:fixed;
+    top:14px;
+    right:14px;
+    z-index:250;
+  }
+  .account-btn{
+    display:flex;
+    align-items:center;
+    gap:.55rem;
+    background:rgba(21,23,28,.85);
+    backdrop-filter:blur(10px);
+    -webkit-backdrop-filter:blur(10px);
+    border:1px solid var(--line);
+    color:var(--text);
+    font-family:'Work Sans', sans-serif;
+    font-weight:600;
+    font-size:.85rem;
+    padding:.4rem .95rem .4rem .4rem;
+    border-radius:999px;
+    cursor:pointer;
+    transition:border-color .2s ease, transform .2s ease, box-shadow .2s ease;
+  }
+  .account-btn:hover, .account-btn:focus-visible{
+    border-color:var(--gold-dim);
+    transform:translateY(-1px);
+    box-shadow:0 10px 26px -14px rgba(0,0,0,.7);
+    outline:none;
+  }
+  .account-avatar{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    width:28px; height:28px;
+    border-radius:50%;
+    background:var(--panel-2);
+    border:1px solid var(--line);
+    color:var(--text-dim);
+    flex-shrink:0;
+  }
+  .account-avatar svg{ width:15px; height:15px; }
+  .account-avatar.has-initial{
+    background:linear-gradient(160deg, var(--gold), var(--gold-dim));
+    color:#141414;
+    font-family:'Bebas Neue', sans-serif;
+    font-size:1.05rem;
+    border-color:transparent;
+  }
+  .account-label{ max-width:130px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+  .account-dropdown{
+    position:absolute;
+    top:calc(100% + 8px);
+    right:0;
+    min-width:230px;
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:6px;
+    box-shadow:0 18px 42px -14px rgba(0,0,0,.75);
+    overflow:hidden;
+  }
+  .account-dropdown[hidden]{ display:none; }
+  .account-dropdown-email{
+    padding:.85rem 1rem .6rem;
+    font-family:'Space Mono', monospace;
+    font-size:.72rem;
+    color:var(--text-dim);
+    border-bottom:1px solid var(--line);
+    word-break:break-all;
+  }
+  .account-dropdown-item{
+    display:block;
+    width:100%;
+    text-align:left;
+    background:transparent;
+    border:none;
+    color:var(--text);
+    font-family:'Work Sans', sans-serif;
+    font-size:.88rem;
+    font-weight:600;
+    padding:.75rem 1rem;
+    cursor:pointer;
+    transition:background .15s ease, color .15s ease;
+  }
+  .account-dropdown-item:hover, .account-dropdown-item:focus-visible{
+    background:rgba(163,33,45,.15);
+    color:#f3c9cd;
+    outline:none;
+  }
+
+  /* ---------- auth modal ---------- */
+  .modal-overlay{
+    position:fixed;
+    inset:0;
+    z-index:300;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:5vh 5vw;
+    background:rgba(6,7,9,.72);
+    backdrop-filter:blur(4px);
+    -webkit-backdrop-filter:blur(4px);
+  }
+  .modal-overlay[hidden]{ display:none; }
+  .modal-card{
+    position:relative;
+    width:min(400px, 100%);
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:2.2rem 2rem 1.8rem;
+    box-shadow:0 30px 70px -20px rgba(0,0,0,.85);
+  }
+  .modal-close{
+    position:absolute;
+    top:.9rem; right:.9rem;
+    width:28px; height:28px;
+    display:flex; align-items:center; justify-content:center;
+    background:transparent;
+    border:1px solid var(--line);
+    border-radius:50%;
+    color:var(--text-dim);
+    font-size:1.15rem;
+    line-height:1;
+    cursor:pointer;
+    transition:border-color .2s ease, color .2s ease;
+  }
+  .modal-close:hover, .modal-close:focus-visible{ border-color:var(--gold-dim); color:var(--text); outline:none; }
+  .modal-eyebrow{ margin-bottom:.6rem; }
+  .modal-title{
+    font-family:'Bebas Neue', sans-serif;
+    font-size:1.9rem;
+    letter-spacing:.01em;
+    margin-bottom:.5rem;
+  }
+  .modal-sub{
+    color:var(--text-dim);
+    font-size:.86rem;
+    line-height:1.55;
+    margin-bottom:1.6rem;
+  }
+  .google-btn{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:.65rem;
+    width:100%;
+    background:#fff;
+    border:1px solid #d5d5d5;
+    color:#1f1f1f;
+    font-family:'Work Sans', sans-serif;
+    font-weight:600;
+    font-size:.9rem;
+    padding:.75rem 1rem;
+    border-radius:4px;
+    cursor:pointer;
+    transition:box-shadow .2s ease, transform .2s ease;
+  }
+  .google-btn:hover, .google-btn:focus-visible{
+    box-shadow:0 6px 16px -6px rgba(0,0,0,.5);
+    transform:translateY(-1px);
+    outline:none;
+  }
+  .modal-divider{
+    display:flex;
+    align-items:center;
+    gap:.8rem;
+    margin:1.4rem 0;
+    color:var(--text-dim);
+    font-family:'Space Mono', monospace;
+    font-size:.65rem;
+    letter-spacing:.15em;
+    text-transform:uppercase;
+  }
+  .modal-divider::before, .modal-divider::after{
+    content:"";
+    flex:1;
+    height:1px;
+    background:var(--line);
+  }
+  .email-form{ display:flex; flex-direction:column; gap:.5rem; }
+  .email-label{
+    font-family:'Space Mono', monospace;
+    font-size:.66rem;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    color:var(--text-dim);
+  }
+  .email-input{
+    background:var(--panel-2);
+    border:1px solid var(--line);
+    color:var(--text);
+    font-family:'Work Sans', sans-serif;
+    font-size:.92rem;
+    padding:.75rem .9rem;
+    border-radius:4px;
+    outline:none;
+    transition:border-color .2s ease, box-shadow .2s ease;
+  }
+  .email-input:focus{ border-color:var(--gold); box-shadow:0 0 0 1px var(--gold) inset; }
+  .email-submit-btn{
+    margin-top:.3rem;
+    background:var(--gold);
+    border:1px solid var(--gold);
+    color:#141414;
+    font-family:'Work Sans', sans-serif;
+    font-weight:700;
+    font-size:.9rem;
+    padding:.75rem 1rem;
+    border-radius:4px;
+    cursor:pointer;
+    transition:filter .2s ease, transform .2s ease;
+  }
+  .email-submit-btn:hover, .email-submit-btn:focus-visible{ filter:brightness(1.08); transform:translateY(-1px); outline:none; }
+  .modal-note{
+    margin-top:1.2rem;
+    color:var(--text-dim);
+    font-size:.72rem;
+    line-height:1.5;
+  }
+
+  @media (max-width:560px){
+    .account-label{ display:none; }
+    .account-btn{ padding:.4rem; }
+    .account-corner{ top:10px; right:10px; }
+    .modal-card{ padding:1.8rem 1.4rem 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="account-corner" id="account-corner">
+  <button class="account-btn" id="account-btn" type="button" aria-haspopup="true" aria-expanded="false">
+    <span class="account-avatar" id="account-avatar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+    </span>
+    <span class="account-label" id="account-label">Sign In</span>
+  </button>
+  <div class="account-dropdown" id="account-dropdown" hidden>
+    <div class="account-dropdown-email" id="account-dropdown-email"></div>
+    <button class="account-dropdown-item" id="signout-btn" type="button">Sign out</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="auth-overlay" hidden>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+    <button class="modal-close" id="auth-close" aria-label="Close" type="button">&times;</button>
+    <p class="eyebrow modal-eyebrow">Welcome back</p>
+    <h2 id="auth-title" class="modal-title">Sign in to Best Movies</h2>
+    <p class="modal-sub">Sign in to sync your watchlist across devices — no password needed.</p>
+
+    <button class="google-btn" id="google-btn" type="button">
+      <svg viewBox="0 0 48 48" width="18" height="18" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.9 32.5 29.4 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3 0 5.8 1.1 7.9 3l6-6C34.6 5.1 29.6 3 24 3 12.4 3 3 12.4 3 24s9.4 21 21 21 21-9.4 21-21c0-1.2-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.6 15.6 19 13 24 13c3 0 5.8 1.1 7.9 3l6-6C34.6 5.1 29.6 3 24 3 15.9 3 8.9 7.7 6.3 14.7z"/><path fill="#4CAF50" d="M24 45c5.4 0 10.3-1.8 14.1-5l-6.5-5.5C29.5 36.4 26.9 37 24 37c-5.4 0-9.9-3.5-11.5-8.3l-6.6 5.1C8.9 40.3 15.9 45 24 45z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-1 3-3.1 5.5-5.8 7.1l6.5 5.5C39.7 37.4 43 31.2 43 24c0-1.2-.1-2.4-.4-3.5z"/></svg>
+      Continue with Google
+    </button>
+
+    <div class="modal-divider"><span>or</span></div>
+
+    <form id="email-form" class="email-form" novalidate>
+      <label for="email-input" class="email-label">Email address</label>
+      <input type="email" id="email-input" class="email-input" placeholder="you@example.com" required autocomplete="email">
+      <button type="submit" class="email-submit-btn">Continue with email</button>
+    </form>
+
+    <p class="modal-note">This preview page isn't wired to a real Google or mail server, so "Google" sign-in and email sign-in both just use the email address you enter to keep your watchlist tied to your account in this demo.</p>
+  </div>
+</div>
+
+<nav class="mini-nav" id="mini-nav" aria-label="Quick genre switch">
+  <button class="mini-title" id="mini-title" title="Back to top">BEST MOVIES</button>
+  <div class="mini-genres" id="mini-genres"></div>
+  <button class="mini-watchlist-btn" id="mini-watchlist-btn">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7.5-4.6-10-9.2C.5 8.4 2.3 5 6 5c2.1 0 3.6 1.2 4.5 2.6C11.4 6.2 12.9 5 15 5c3.7 0 5.5 3.4 4 6.8C19.5 16.4 12 21 12 21z"/></svg>
+    <span id="mini-wl-count">My List</span>
+  </button>
+</nav>
+
+<section class="hero">
+  <div class="spotlight"></div>
+  <p class="eyebrow">Ranked by IMDb rating</p>
+  <h1 class="title">BEST <span>MOVIES</span></h1>
+  <p class="tagline">Four genres. 60 films each, ranked by IMDb rating. Heart a title to save it to My List, sort by newest or A–Z, or hit Surprise Me for a random pick.</p>
+  <div class="filmstrip"></div>
+
+  <nav class="genres" aria-label="Choose a genre">
+    <button class="genre-btn" data-genre="romance">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7.5-4.6-10-9.2C.5 8.4 2.3 5 6 5c2.1 0 3.6 1.2 4.5 2.6C11.4 6.2 12.9 5 15 5c3.7 0 5.5 3.4 4 6.8C19.5 16.4 12 21 12 21z"/></svg>
+      Romantic
+    </button>
+    <button class="genre-btn" data-genre="action">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 11-14h-7l0-6z"/></svg>
+      Action
+    </button>
+    <button class="genre-btn" data-genre="scifi">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 16s-3 3-2 6c3 1 6-2 6-2M12 15l-3 3m9-14c1.5 1.5 1.7 5-2 8.5C12.5 16 9 16 7 14c-2-2-2-5.5 1.5-9C12 1.3 15.5 1.5 17 3z"/><circle cx="14" cy="7" r="1.4"/></svg>
+      Science Fiction
+    </button>
+    <button class="genre-btn" data-genre="drama">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8.5" cy="9" r="4.5"/><circle cx="15.5" cy="14.5" r="4.5"/><path d="M7 8h1M10 8h1M6.5 11c1 1 2.5 1 3.5 0M14 13.5h1M17 13.5h1M13.5 16.5c1 1 2.5 1 3.5 0"/></svg>
+      Drama
+    </button>
+    <button class="genre-btn watchlist-btn" data-genre="watchlist">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7.5-4.6-10-9.2C.5 8.4 2.3 5 6 5c2.1 0 3.6 1.2 4.5 2.6C11.4 6.2 12.9 5 15 5c3.7 0 5.5 3.4 4 6.8C19.5 16.4 12 21 12 21z"/></svg>
+      My List <span class="wl-count" id="wl-count">0</span>
+    </button>
+  </nav>
+
+  <p class="scroll-cue">↓ select a genre, or search below</p>
+
+  <div class="hero-actions">
+    <div class="search-wrap">
+      <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+      <input type="text" id="search-input" class="search-input" placeholder="Search any of the 240 movies..." autocomplete="off">
+    </div>
+    <button class="surprise-btn" id="surprise-btn" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="1.2" fill="currentColor" stroke="none"/><circle cx="16" cy="8" r="1.2" fill="currentColor" stroke="none"/><circle cx="8" cy="16" r="1.2" fill="currentColor" stroke="none"/><circle cx="16" cy="16" r="1.2" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.2" fill="currentColor" stroke="none"/></svg>
+      Surprise Me
+    </button>
+  </div>
+</section>
+
+<section class="results" id="results">
+  <div class="results-head">
+    <span class="label" id="results-label">Top 60</span>
+    <h2 id="results-title">Pick a genre above</h2>
+    <span class="count" id="results-count"></span>
+    <div class="sort-control" id="sort-control" role="group" aria-label="Sort results" hidden>
+      <button class="sort-btn active" data-sort="rating" type="button">Top Rated</button>
+      <button class="sort-btn" data-sort="year" type="button">Newest</button>
+      <button class="sort-btn" data-sort="title" type="button">A–Z</button>
+    </div>
+  </div>
+  <div id="results-body">
+    <p class="placeholder">Your list will appear here, ranked highest IMDb rating first.</p>
+  </div>
+</section>
+
+<footer>Best Movies — ratings sourced from IMDb, for reference only · sign in to sync your watchlist across devices</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite">
+  <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7.5-4.6-10-9.2C.5 8.4 2.3 5 6 5c2.1 0 3.6 1.2 4.5 2.6C11.4 6.2 12.9 5 15 5c3.7 0 5.5 3.4 4 6.8C19.5 16.4 12 21 12 21z"/></svg>
+  <span id="toast-text">Added to your list</span>
+</div>
+
+<script>
+  const DATA = {
+    romance: {
+      label: "Romantic",
+      films: [
+        { title: "Casablanca", year: 1942, rating: 8.5, note: "Wartime Casablanca, a love re-lit and let go." },
+        { title: "Before Sunrise", year: 1995, rating: 8.1, note: "One night in Vienna between two strangers on a train." },
+        { title: "Eternal Sunshine of the Spotless Mind", year: 2004, rating: 8.3, note: "A couple erases each other from memory, and finds their way back." },
+        { title: "Amélie", year: 2001, rating: 8.3, note: "A shy Parisian waitress engineers small joys for strangers." },
+        { title: "La La Land", year: 2016, rating: 8.0, note: "An actress and a jazz pianist chase two dreams at once." },
+        { title: "Roman Holiday", year: 1953, rating: 7.9, note: "A runaway princess and a reporter share one day in Rome." },
+        { title: "Titanic", year: 1997, rating: 7.9, note: "First class meets steerage aboard a ship that won't reach New York." },
+        { title: "The Notebook", year: 2004, rating: 7.8, note: "A summer romance, a letter a year, a lifetime of waiting." },
+        { title: "Pride & Prejudice", year: 2005, rating: 7.8, note: "Wit, pride, and a very long walk across the English countryside." },
+        { title: "When Harry Met Sally...", year: 1989, rating: 7.6, note: "Can friends really stay just friends? Twelve years say otherwise." },
+        { title: "Gone with the Wind", year: 1939, rating: 8.2, note: "A headstrong Southern belle survives war, ruin, and one impossible love." },
+        { title: "It Happened One Night", year: 1934, rating: 8.1, note: "A runaway heiress and a wisecracking reporter share a bus ride and a blanket wall." },
+        { title: "The Princess Bride", year: 1987, rating: 8.0, note: "True love, a farm boy turned pirate, and a storybook told just right." },
+        { title: "Before Sunset", year: 2004, rating: 8.0, note: "Nine years later, one Paris afternoon to find out what almost was." },
+        { title: "Her", year: 2013, rating: 8.0, note: "A lonely writer falls for the voice running his operating system." },
+        { title: "Silver Linings Playbook", year: 2012, rating: 7.7, note: "Two people rebuilding themselves stumble into rebuilding something together." },
+        { title: "500 Days of Summer", year: 2009, rating: 7.7, note: "Not a love story — a story about a love, told out of order." },
+        { title: "The Fault in Our Stars", year: 2014, rating: 7.7, note: "Two teenagers in cancer support group find a romance neither expected." },
+        { title: "Brokeback Mountain", year: 2005, rating: 7.7, note: "Two ranch hands share a summer that shapes the rest of their lives." },
+        { title: "A Star Is Born", year: 2018, rating: 7.6, note: "A fading star and a rising one fall for each other as their paths cross." },
+        { title: "Moulin Rouge!", year: 2001, rating: 7.6, note: "A poet and a courtesan sing their way through 1900s Paris nightlife." },
+        { title: "Notting Hill", year: 1999, rating: 7.2, note: "A bookshop owner falls for the most famous actress in the world." },
+        { title: "Ghost", year: 1990, rating: 7.1, note: "A murdered man tries to protect the woman he loves from beyond." },
+        { title: "Pretty Woman", year: 1990, rating: 7.0, note: "A businessman hires a companion for a week, and neither expects what follows." },
+        { title: "Crazy Rich Asians", year: 2018, rating: 6.9, note: "A trip to meet the family turns into a crash course in old money." },
+        { title: "Sleepless in Seattle", year: 1993, rating: 6.8, note: "A radio call-in leads a widower's son to try to find him a new match." },
+        { title: "You've Got Mail", year: 1998, rating: 6.6, note: "Two rival booksellers fall for each other anonymously online." },
+        { title: "Call Me by Your Name", year: 2017, rating: 7.9, note: "A summer in Italy changes a teenager and a visiting scholar forever." },
+        { title: "Atonement", year: 2007, rating: 7.8, note: "A childhood lie tears two lovers apart for the rest of their lives." },
+        { title: "Jerry Maguire", year: 1996, rating: 7.3, note: "A sports agent's crisis of conscience costs him everything but the right people." },
+        { title: "Dirty Dancing", year: 1987, rating: 6.9, note: "A summer resort, a dance instructor, and a girl who won't be put in a corner." },
+        { title: "Me Before You", year: 2016, rating: 7.4, note: "A free-spirited caretaker changes what a paralyzed man believes his life can be." },
+        { title: "The Time Traveler's Wife", year: 2009, rating: 7.1, note: "A love story complicated by a man who can't control when he disappears." },
+        { title: "P.S. I Love You", year: 2007, rating: 7.1, note: "A widow keeps receiving letters her late husband wrote before he died." },
+        { title: "A Walk to Remember", year: 2002, rating: 7.3, note: "A rebellious teen falls for the preacher's daughter he was set to mock." },
+        { title: "Bridget Jones's Diary", year: 2001, rating: 6.7, note: "A chaotic year of diary entries, bad dates, and two very different men." },
+        { title: "Love Actually", year: 2003, rating: 7.6, note: "Ten intertwined London love stories collide in the run-up to Christmas." },
+        { title: "10 Things I Hate About You", year: 1999, rating: 7.3, note: "A bet to date the unapproachable older sister turns into something real." },
+        { title: "The Wedding Singer", year: 1998, rating: 6.8, note: "A jilted wedding singer and an engaged waitress fall for each other instead." },
+        { title: "My Big Fat Greek Wedding", year: 2002, rating: 6.6, note: "A woman falls for a non-Greek man, and her enormous family has opinions." },
+        { title: "Beauty and the Beast", year: 1991, rating: 8.0, note: "A bookish young woman sees past a cursed prince's monstrous exterior." },
+        { title: "Anna Karenina", year: 2012, rating: 6.6, note: "A married aristocrat's affair unravels her place in Russian high society." },
+        { title: "Cyrano de Bergerac", year: 1990, rating: 8.0, note: "A brilliant, big-nosed poet woos a woman on another man's behalf." },
+        { title: "In the Mood for Love", year: 2000, rating: 8.1, note: "Two neighbors, both married to unfaithful spouses, grow close without ever crossing a line." },
+        { title: "Portrait of a Lady on Fire", year: 2019, rating: 8.1, note: "A painter and her reluctant subject fall for each other on an isolated island." },
+        { title: "Blue Valentine", year: 2010, rating: 7.4, note: "A marriage's beginning and its unraveling, told side by side." },
+        { title: "The Bridges of Madison County", year: 1995, rating: 7.3, note: "A photographer and a farmer's wife share four days that outlast a lifetime." },
+        { title: "An Affair to Remember", year: 1957, rating: 7.7, note: "Two engaged strangers fall for each other on a transatlantic crossing." },
+        { title: "Breakfast at Tiffany's", year: 1961, rating: 7.6, note: "A free-spirited socialite and her new neighbor circle each other in New York." },
+        { title: "West Side Story", year: 1961, rating: 7.6, note: "Star-crossed lovers from rival gangs sing their way toward tragedy." },
+        { title: "Doctor Zhivago", year: 1965, rating: 7.9, note: "A doctor and poet's love survives revolution, exile, and war." },
+        { title: "The English Patient", year: 1996, rating: 7.4, note: "A dying man's wartime love affair is pieced together from his memories." },
+        { title: "Punch-Drunk Love", year: 2002, rating: 7.3, note: "A socially awkward man's chaotic life is steadied by an unexpected romance." },
+        { title: "The Great Gatsby", year: 2013, rating: 7.2, note: "A mysterious millionaire's parties are all aimed at winning back one woman." },
+        { title: "The Vow", year: 2012, rating: 6.7, note: "A husband tries to make his wife fall in love with him again after amnesia." },
+        { title: "Chocolat", year: 2000, rating: 7.2, note: "A chocolatier's arrival stirs up a rigid French village, and one man in particular." },
+        { title: "Sense and Sensibility", year: 1995, rating: 7.7, note: "Two sisters navigate love and heartbreak after their family's fortune collapses." },
+        { title: "Shakespeare in Love", year: 1998, rating: 7.1, note: "A struggling playwright finds his muse in a woman disguised as an actor." },
+        { title: "The Age of Innocence", year: 1993, rating: 7.3, note: "A man engaged to one woman falls for another in strict 1870s New York society." },
+        { title: "Emma.", year: 2020, rating: 6.9, note: "A meddling matchmaker keeps arranging everyone's love life but her own." }
+      ]
+    },
+    action: {
+      label: "Action",
+      films: [
+        { title: "The Dark Knight", year: 2008, rating: 9.0, note: "Gotham's white knight and its clown prince collide." },
+        { title: "The Lord of the Rings: The Return of the King", year: 2003, rating: 9.0, note: "The last march on Mordor, and the ring's final mile." },
+        { title: "The Lord of the Rings: The Fellowship of the Ring", year: 2001, rating: 8.9, note: "Nine walkers set out from the Shire to save Middle-earth." },
+        { title: "The Lord of the Rings: The Two Towers", year: 2002, rating: 8.8, note: "The fellowship splits, and Helm's Deep braces for siege." },
+        { title: "Star Wars: Episode V — The Empire Strikes Back", year: 1980, rating: 8.7, note: "The rebellion scatters, and a father's shadow grows long." },
+        { title: "Gladiator", year: 2000, rating: 8.5, note: "A general turned slave turned arena legend, out for Rome." },
+        { title: "Léon: The Professional", year: 1994, rating: 8.5, note: "A hitman and an orphaned girl form an unlikely partnership." },
+        { title: "Raiders of the Lost Ark", year: 1981, rating: 8.4, note: "An archaeologist races the Nazis to a relic that melts faces." },
+        { title: "Die Hard", year: 1988, rating: 8.2, note: "One cop, bare feet, and a skyscraper full of thieves." },
+        { title: "Mad Max: Fury Road", year: 2015, rating: 8.1, note: "A wasteland chase that barely stops for two hours straight." },
+        { title: "Star Wars: Episode IV — A New Hope", year: 1977, rating: 8.6, note: "A farm boy, a smuggler, and a princess take on an empire." },
+        { title: "Star Wars: Episode VI — Return of the Jedi", year: 1983, rating: 8.3, note: "The rebellion's final push, and one last chance to save a father." },
+        { title: "Aliens", year: 1986, rating: 8.4, note: "Ripley returns to the derelict colony, this time with marines." },
+        { title: "Terminator 2: Judgment Day", year: 1991, rating: 8.6, note: "This time the machine is the one protecting John Connor." },
+        { title: "Heat", year: 1995, rating: 8.3, note: "A cop and a career thief study each other across one long LA night." },
+        { title: "Kill Bill: Vol. 1", year: 2003, rating: 8.2, note: "A former assassin wakes from a coma with one very specific list." },
+        { title: "Casino Royale", year: 2006, rating: 8.0, note: "Bond's first mission puts him at a very high-stakes poker table." },
+        { title: "The Bourne Ultimatum", year: 2007, rating: 8.0, note: "An amnesiac agent closes in on the truth about who made him." },
+        { title: "Inglourious Basterds", year: 2009, rating: 8.3, note: "A team of soldiers and a cinema owner plot revenge on the same night." },
+        { title: "Django Unchained", year: 2012, rating: 8.4, note: "A freed slave turned bounty hunter rides south to find his wife." },
+        { title: "Skyfall", year: 2012, rating: 7.8, note: "Bond's past catches up with him just as MI6 comes under attack." },
+        { title: "The Avengers", year: 2012, rating: 8.0, note: "Earth's mightiest heroes are forced to team up for the first time." },
+        { title: "John Wick", year: 2014, rating: 7.4, note: "A retired hitman is pulled back in over a stolen car and a dog." },
+        { title: "Kingsman: The Secret Service", year: 2014, rating: 7.7, note: "A street kid gets recruited into a very posh spy agency." },
+        { title: "Predator", year: 1987, rating: 7.8, note: "A commando team in the jungle realizes they're the ones being hunted." },
+        { title: "The Matrix Reloaded", year: 2003, rating: 7.2, note: "Neo pushes his newfound powers further as the machine war escalates." },
+        { title: "Speed", year: 1994, rating: 7.3, note: "A bus can't slow below 50 mph or a bomb on board goes off." },
+        { title: "Face/Off", year: 1997, rating: 7.3, note: "An agent and a terrorist literally trade faces to stop a bombing." },
+        { title: "True Lies", year: 1994, rating: 7.2, note: "A secret agent's cover life at home collides with his real job." },
+        { title: "The Rock", year: 1996, rating: 7.4, note: "An ex-convict and a chemist must retake Alcatraz from rogue soldiers." },
+        { title: "Con Air", year: 1997, rating: 6.9, note: "A prisoner transport flight turns into a hijacking at 30,000 feet." },
+        { title: "Rambo: First Blood", year: 1982, rating: 7.6, note: "A traumatized veteran is pushed too far by a small-town sheriff." },
+        { title: "Total Recall", year: 1990, rating: 7.5, note: "A man's implanted Mars vacation memory turns out to be very real." },
+        { title: "RoboCop", year: 1987, rating: 7.6, note: "A slain officer is rebuilt as a cyborg enforcer for a crime-ridden city." },
+        { title: "Lethal Weapon", year: 1987, rating: 7.6, note: "A reckless cop and his steady new partner take on a drug ring." },
+        { title: "Point Break", year: 1991, rating: 7.3, note: "An FBI agent infiltrates a gang of surfers who moonlight as bank robbers." },
+        { title: "The Fugitive", year: 1993, rating: 7.8, note: "A wrongly convicted doctor races to prove his innocence while on the run." },
+        { title: "Mission: Impossible – Fallout", year: 2018, rating: 7.7, note: "A recovered set of plutonium cores puts Hunt's whole team on the clock." },
+        { title: "Mission: Impossible – Ghost Protocol", year: 2011, rating: 7.4, note: "Disavowed and framed, Hunt's team goes rogue to clear their names." },
+        { title: "The Bourne Identity", year: 2002, rating: 7.9, note: "An amnesiac pulled from the sea starts uncovering a deadly past." },
+        { title: "The Dark Knight Rises", year: 2012, rating: 8.4, note: "Batman returns to face a masked mercenary threatening to level Gotham." },
+        { title: "Logan", year: 2017, rating: 8.1, note: "An aging Wolverine protects a young mutant on one last, brutal run." },
+        { title: "Kill Bill: Vol. 2", year: 2004, rating: 8.0, note: "The Bride's revenge tour reaches the man at the top of her list." },
+        { title: "V for Vendetta", year: 2005, rating: 8.1, note: "A masked vigilante sparks a rebellion against a totalitarian government." },
+        { title: "300", year: 2006, rating: 7.7, note: "Three hundred Spartans make a legendary last stand at Thermopylae." },
+        { title: "Sicario", year: 2015, rating: 7.6, note: "An FBI agent is drawn into a covert war against a drug cartel." },
+        { title: "The Raid: Redemption", year: 2011, rating: 7.6, note: "A rookie cop fights floor by floor through a crime lord's tower." },
+        { title: "Man on Fire", year: 2004, rating: 7.7, note: "A burned-out bodyguard goes to war after his young charge is kidnapped." },
+        { title: "Unforgiven", year: 1992, rating: 8.2, note: "A retired gunslinger takes one last job that reopens old wounds." },
+        { title: "Enter the Dragon", year: 1973, rating: 7.6, note: "A martial artist enters a deadly tournament to expose a crime lord." },
+        { title: "The Wild Bunch", year: 1969, rating: 7.9, note: "An aging outlaw gang plans one final robbery as the Old West closes in." },
+        { title: "Wonder Woman", year: 2017, rating: 7.3, note: "An Amazon warrior leaves her island to fight in the First World War." },
+        { title: "Black Panther", year: 2018, rating: 7.3, note: "A new king defends Wakanda's secrets from a challenger with a rightful claim." },
+        { title: "Spider-Man: No Way Home", year: 2021, rating: 8.2, note: "A spell gone wrong tears open the multiverse and its villains." },
+        { title: "Top Gun: Maverick", year: 2022, rating: 8.2, note: "A legendary pilot trains a new generation for an impossible mission." },
+        { title: "Mad Max 2: The Road Warrior", year: 1981, rating: 7.6, note: "A wasteland drifter defends a fuel refinery from a marauding gang." },
+        { title: "The Terminator", year: 1984, rating: 8.1, note: "A machine is sent back to erase a woman before her son is born." },
+        { title: "Batman Begins", year: 2005, rating: 8.2, note: "A traumatized billionaire trains abroad before becoming Gotham's protector." },
+        { title: "Air Force One", year: 1997, rating: 6.5, note: "The president fights back after hijackers seize control of his own plane." },
+        { title: "Rambo", year: 2008, rating: 6.9, note: "A retired soldier is pulled back into combat to rescue kidnapped aid workers." }
+      ]
+    },
+    scifi: {
+      label: "Science Fiction",
+      films: [
+        { title: "Inception", year: 2010, rating: 8.8, note: "A heist team plants an idea, four dream-layers deep." },
+        { title: "Interstellar", year: 2014, rating: 8.7, note: "A father crosses a wormhole to save the world his daughter inherits." },
+        { title: "The Matrix", year: 1999, rating: 8.7, note: "A red pill, a black cat, and a war for the real world." },
+        { title: "Terminator 2: Judgment Day", year: 1991, rating: 8.6, note: "This time the machine is the one protecting John Connor." },
+        { title: "Alien", year: 1979, rating: 8.5, note: "A cargo ship, a distress signal, and something that shouldn't exist." },
+        { title: "Back to the Future", year: 1985, rating: 8.5, note: "A DeLorean, 1.21 gigawatts, and a very risky family reunion." },
+        { title: "2001: A Space Odyssey", year: 1968, rating: 8.3, note: "Human evolution, told through a monolith and a rogue AI." },
+        { title: "Jurassic Park", year: 1993, rating: 8.2, note: "Cloned dinosaurs, one storm, and a park that isn't ready." },
+        { title: "Blade Runner 2049", year: 2017, rating: 8.0, note: "A new blade runner unearths a secret that could end everything." },
+        { title: "Arrival", year: 2016, rating: 7.9, note: "A linguist learns an alien language, and time stops behaving." },
+        { title: "Star Wars: Episode V — The Empire Strikes Back", year: 1980, rating: 8.7, note: "The rebellion scatters, and a father's shadow grows long." },
+        { title: "Blade Runner", year: 1982, rating: 8.1, note: "A weary detective hunts synthetic humans through a rain-soaked city." },
+        { title: "The Terminator", year: 1984, rating: 8.1, note: "A machine is sent back to erase a woman before her son is born." },
+        { title: "Aliens", year: 1986, rating: 8.4, note: "Ripley returns to the derelict colony, this time with marines." },
+        { title: "E.T. the Extra-Terrestrial", year: 1982, rating: 7.8, note: "A stranded alien and a lonely boy build an unlikely friendship." },
+        { title: "Minority Report", year: 2002, rating: 7.6, note: "A cop who arrests future murderers becomes one of his own targets." },
+        { title: "WALL-E", year: 2008, rating: 8.4, note: "A lonely trash-compacting robot falls for a sleek scout from Earth's fleet." },
+        { title: "District 9", year: 2009, rating: 7.9, note: "A bureaucrat relocating alien refugees starts turning into one." },
+        { title: "Star Trek", year: 2009, rating: 7.9, note: "A young, reckless crew is thrown together for the Enterprise's first mission." },
+        { title: "Ex Machina", year: 2014, rating: 7.7, note: "A programmer tests just how human an AI's mind has become." },
+        { title: "Edge of Tomorrow", year: 2014, rating: 7.9, note: "A soldier relives the same alien invasion day until he gets it right." },
+        { title: "Children of Men", year: 2006, rating: 7.9, note: "In a world where no child has been born for 18 years, one miracle changes everything." },
+        { title: "Dune", year: 2021, rating: 8.0, note: "A duke's son is thrust into a desert planet's war over a priceless resource." },
+        { title: "The Fifth Element", year: 1997, rating: 7.6, note: "A cab driver becomes humanity's last hope against an ancient evil." },
+        { title: "The Prestige", year: 2006, rating: 8.5, note: "Two rival magicians escalate their feud into something far darker." },
+        { title: "Metropolis", year: 1927, rating: 8.3, note: "A city divided between elite planners and underground laborers reaches a breaking point." },
+        { title: "A Clockwork Orange", year: 1971, rating: 8.3, note: "A violent delinquent is subjected to a controversial behavioral experiment." },
+        { title: "Close Encounters of the Third Kind", year: 1977, rating: 7.6, note: "Strange sightings pull an ordinary man toward a first contact event." },
+        { title: "Total Recall", year: 1990, rating: 7.5, note: "A man's implanted Mars vacation memory turns out to be very real." },
+        { title: "RoboCop", year: 1987, rating: 7.6, note: "A slain officer is rebuilt as a cyborg enforcer for a crime-ridden city." },
+        { title: "Twelve Monkeys", year: 1995, rating: 8.0, note: "A time traveler is sent back to find the source of a civilization-ending virus." },
+        { title: "Gattaca", year: 1997, rating: 7.8, note: "A genetically imperfect man fakes his way toward a career among the engineered elite." },
+        { title: "The Truman Show", year: 1998, rating: 8.2, note: "A man slowly realizes his entire life has been a broadcast television show." },
+        { title: "Dark City", year: 1998, rating: 7.6, note: "A man wakes with no memory in a city that rebuilds itself every night." },
+        { title: "Donnie Darko", year: 2001, rating: 8.0, note: "A troubled teen is warned of the world's end by a menacing rabbit figure." },
+        { title: "Moon", year: 2009, rating: 7.8, note: "A lone lunar miner nearing the end of his contract uncovers an unsettling secret." },
+        { title: "Avatar", year: 2009, rating: 7.9, note: "A paraplegic marine embedded among an alien tribe questions which side he's on." },
+        { title: "Looper", year: 2012, rating: 7.4, note: "A hitman who kills targets sent from the future faces his own older self." },
+        { title: "Gravity", year: 2013, rating: 7.7, note: "Two astronauts fight to survive after debris destroys their shuttle." },
+        { title: "Elysium", year: 2013, rating: 6.6, note: "Earth's poor look up at a luxurious space station they're forbidden to reach." },
+        { title: "Snowpiercer", year: 2013, rating: 7.1, note: "The last of humanity survives aboard a train that never stops moving." },
+        { title: "Guardians of the Galaxy", year: 2014, rating: 8.0, note: "A ragtag crew of misfits is forced to save the galaxy nobody asked them to." },
+        { title: "Ready Player One", year: 2018, rating: 7.4, note: "A virtual reality treasure hunt determines who controls the world's favorite escape." },
+        { title: "Annihilation", year: 2018, rating: 6.8, note: "A team enters a mutating zone where nature itself no longer follows the rules." },
+        { title: "Spider-Man: Into the Spider-Verse", year: 2018, rating: 8.4, note: "A new Spider-Man meets alternate versions of himself from other dimensions." },
+        { title: "Avengers: Endgame", year: 2019, rating: 8.4, note: "The remaining Avengers attempt one last plan to undo a universal catastrophe." },
+        { title: "Tenet", year: 2020, rating: 7.3, note: "An agent learns to manipulate the flow of time itself to stop a hidden war." },
+        { title: "Everything Everywhere All at Once", year: 2022, rating: 7.8, note: "A laundromat owner discovers she must save the multiverse from collapse." },
+        { title: "Independence Day", year: 1996, rating: 7.0, note: "Humanity unites to fight back after alien ships appear over its biggest cities." },
+        { title: "Men in Black", year: 1997, rating: 7.3, note: "A secret agency polices the alien population quietly living on Earth." },
+        { title: "Contact", year: 1997, rating: 7.4, note: "A scientist follows a mysterious signal that may be humanity's first contact." },
+        { title: "The Iron Giant", year: 1999, rating: 8.1, note: "A boy befriends a giant robot that fell from the sky, unsure of its purpose." },
+        { title: "A.I. Artificial Intelligence", year: 2001, rating: 7.1, note: "A robotic child searches for a way to become real so his mother will love him." },
+        { title: "War of the Worlds", year: 2005, rating: 6.5, note: "A father tries to get his kids to safety as alien war machines level cities." },
+        { title: "Pacific Rim", year: 2013, rating: 7.0, note: "Giant robot pilots defend the coastlines against monsters rising from the sea." },
+        { title: "Oblivion", year: 2013, rating: 7.0, note: "A drone repairman on a ravaged Earth begins to question his own memories." },
+        { title: "Cloud Atlas", year: 2012, rating: 7.4, note: "Six interconnected stories span centuries, all echoing the same souls." },
+        { title: "Chappie", year: 2015, rating: 6.8, note: "A stolen police robot is given consciousness and raised by amateur criminals." },
+        { title: "Alita: Battle Angel", year: 2019, rating: 7.3, note: "A cyborg with no memory of her past is rebuilt and finds she's a born fighter." },
+        { title: "The Matrix Revolutions", year: 2003, rating: 6.4, note: "The war between humans and machines reaches its final confrontation." }
+      ]
+    },
+    drama: {
+      label: "Drama",
+      films: [
+        { title: "The Shawshank Redemption", year: 1994, rating: 9.3, note: "Two decades in Shawshank, patience carved into stone." },
+        { title: "The Godfather", year: 1972, rating: 9.2, note: "A crime family's quiet son inherits an empire of favors." },
+        { title: "The Godfather Part II", year: 1974, rating: 9.0, note: "Two timelines — one rise, one reign — braided together." },
+        { title: "12 Angry Men", year: 1957, rating: 9.0, note: "Eleven guilty votes, one holdout, and a very hot jury room." },
+        { title: "Schindler's List", year: 1993, rating: 9.0, note: "A list that becomes the only thing standing between life and death." },
+        { title: "Forrest Gump", year: 1994, rating: 8.8, note: "A simple man walks through three decades of American history." },
+        { title: "Fight Club", year: 1999, rating: 8.8, note: "An insomniac, a soap salesman, and a club with one rule." },
+        { title: "One Flew Over the Cuckoo's Nest", year: 1975, rating: 8.7, note: "A new patient tests the walls of a psychiatric ward." },
+        { title: "Goodfellas", year: 1990, rating: 8.7, note: "Three decades inside the mob, told by the man who lived it." },
+        { title: "City of God", year: 2002, rating: 8.6, note: "Two boys, one camera, one slum — and very different fates." },
+        { title: "Pulp Fiction", year: 1994, rating: 8.9, note: "Hitmen, a boxer, and a diner heist, told out of order and back again." },
+        { title: "The Silence of the Lambs", year: 1991, rating: 8.6, note: "A trainee FBI agent trades information with an imprisoned killer." },
+        { title: "Se7en", year: 1995, rating: 8.6, note: "Two detectives chase a killer staging murders around the seven sins." },
+        { title: "The Green Mile", year: 1999, rating: 8.6, note: "A death row guard meets an inmate with an impossible gift." },
+        { title: "Grave of the Fireflies", year: 1988, rating: 8.5, note: "A brother and sister struggle to survive the final months of the war." },
+        { title: "The Pianist", year: 2002, rating: 8.5, note: "A Jewish pianist hides in the ruins of Warsaw during the occupation." },
+        { title: "Whiplash", year: 2014, rating: 8.5, note: "A drumming student pushes himself to the edge under a brutal instructor." },
+        { title: "The Departed", year: 2006, rating: 8.5, note: "A cop and a criminal each go undercover in the other's world." },
+        { title: "Parasite", year: 2019, rating: 8.5, note: "A poor family cons its way into a wealthy household, and it spirals." },
+        { title: "Saving Private Ryan", year: 1998, rating: 8.6, note: "A squad is sent behind enemy lines to bring one soldier home." },
+        { title: "American History X", year: 1998, rating: 8.5, note: "A reformed neo-Nazi tries to stop his younger brother from following his old path." },
+        { title: "Joker", year: 2019, rating: 8.4, note: "A failed comedian's isolation curdles into something the city can't ignore." },
+        { title: "American Beauty", year: 1999, rating: 8.3, note: "A suburban father's midlife unraveling upends everyone around him." },
+        { title: "A Beautiful Mind", year: 2001, rating: 8.2, note: "A brilliant mathematician's genius and delusions become impossible to separate." },
+        { title: "Spirited Away", year: 2001, rating: 8.6, note: "A girl gets trapped in a spirit world and must work to free her parents." },
+        { title: "There Will Be Blood", year: 2007, rating: 8.2, note: "A ruthless oilman's ambition consumes everyone and everything around him." },
+        { title: "No Country for Old Men", year: 2007, rating: 8.2, note: "A hunter who finds drug money becomes prey for a relentless killer." },
+        { title: "The Social Network", year: 2010, rating: 7.7, note: "A dorm-room idea grows into Facebook, and the friendships behind it don't survive." },
+        { title: "Good Will Hunting", year: 1997, rating: 8.3, note: "A janitor's hidden genius is discovered, but his past is what really holds him back." },
+        { title: "Gone Girl", year: 2014, rating: 8.1, note: "A husband becomes the prime suspect when his wife vanishes on their anniversary." },
+        { title: "Room", year: 2015, rating: 8.1, note: "A mother and son held captive for years finally find a way out." },
+        { title: "Manchester by the Sea", year: 2016, rating: 7.8, note: "A man returns to his hometown and confronts a tragedy he can't outrun." },
+        { title: "Moonlight", year: 2016, rating: 7.4, note: "A young man's identity is shaped across three chapters of his life in Miami." },
+        { title: "Requiem for a Dream", year: 2000, rating: 8.3, note: "Four intertwined lives spiral downward chasing very different addictions." },
+        { title: "Memento", year: 2000, rating: 8.4, note: "A man with no short-term memory hunts his wife's killer using notes and tattoos." },
+        { title: "Rain Man", year: 1988, rating: 8.0, note: "A self-absorbed man discovers the autistic brother he never knew he had." },
+        { title: "Dead Poets Society", year: 1989, rating: 8.1, note: "An unconventional teacher pushes his students to seize their own lives." },
+        { title: "The Elephant Man", year: 1980, rating: 8.2, note: "A severely disfigured man is finally treated with dignity by a compassionate doctor." },
+        { title: "Amadeus", year: 1984, rating: 8.4, note: "A rival composer's jealousy of Mozart's genius curdles into obsession." },
+        { title: "Chinatown", year: 1974, rating: 8.2, note: "A private investigator uncovers a conspiracy far bigger than his original case." },
+        { title: "Apocalypse Now", year: 1979, rating: 8.4, note: "A soldier travels upriver into Cambodia on a mission that unravels his sanity." },
+        { title: "Taxi Driver", year: 1976, rating: 8.2, note: "A lonely, alienated cabbie's grip on reality slips as violence builds inside him." },
+        { title: "Raging Bull", year: 1980, rating: 8.2, note: "A boxer's fury in the ring destroys everything he has outside of it." },
+        { title: "The Sixth Sense", year: 1999, rating: 8.1, note: "A troubled boy who sees the dead finds an unlikely ally in his new psychologist." },
+        { title: "American Gangster", year: 2007, rating: 7.8, note: "A Harlem drug lord's rise draws the attention of one determined detective." },
+        { title: "12 Years a Slave", year: 2013, rating: 8.1, note: "A free man is kidnapped and sold into slavery in the pre-Civil War South." },
+        { title: "The Wolf of Wall Street", year: 2013, rating: 8.2, note: "A stockbroker's excess and fraud spiral completely out of control." },
+        { title: "Nightcrawler", year: 2014, rating: 7.8, note: "A hungry freelance cameraman will do almost anything for the perfect shot." },
+        { title: "The Grand Budapest Hotel", year: 2014, rating: 8.1, note: "A legendary concierge and his protégé get tangled in a stolen painting and a will." },
+        { title: "Boyhood", year: 2014, rating: 7.9, note: "A boy's life is filmed over twelve real years, growing up on screen." },
+        { title: "Spotlight", year: 2015, rating: 8.1, note: "A team of journalists uncovers a decades-long cover-up within the Church." },
+        { title: "The Revenant", year: 2015, rating: 8.0, note: "A frontiersman left for dead claws his way back for revenge." },
+        { title: "Hacksaw Ridge", year: 2016, rating: 8.1, note: "A combat medic refuses to carry a weapon into one of the war's bloodiest battles." },
+        { title: "Get Out", year: 2017, rating: 7.7, note: "A weekend meeting his girlfriend's parents turns into something far more sinister." },
+        { title: "Three Billboards Outside Ebbing, Missouri", year: 2017, rating: 8.1, note: "A grieving mother's billboards ignite a war with the local police." },
+        { title: "Bohemian Rhapsody", year: 2018, rating: 7.9, note: "A band's unlikely rise traces the life of its singular frontman." },
+        { title: "Marriage Story", year: 2019, rating: 7.9, note: "A couple's divorce turns amicable intentions into an all-out legal fight." },
+        { title: "The Irishman", year: 2019, rating: 7.8, note: "An aging hitman looks back on decades inside the mob and its politics." },
+        { title: "1917", year: 2019, rating: 8.2, note: "Two soldiers race across enemy lines to deliver a message that could save thousands." },
+        { title: "Sound of Metal", year: 2019, rating: 7.7, note: "A drummer's sudden hearing loss forces him to reimagine his entire identity." }
+      ]
+    }
+  };
+
+  const buttons = document.querySelectorAll(".genre-btn");
+  const resultsTitle = document.getElementById("results-title");
+  const resultsCount = document.getElementById("results-count");
+  const resultsLabel = document.getElementById("results-label");
+  const resultsBody = document.getElementById("results-body");
+  const resultsSection = document.getElementById("results");
+  const sortControl = document.getElementById("sort-control");
+  const wlCountEl = document.getElementById("wl-count");
+  const miniWlCountEl = document.getElementById("mini-wl-count");
+  const toastEl = document.getElementById("toast");
+  const toastTextEl = document.getElementById("toast-text");
+
+  // ---------- state ----------
+  let watchlist = new Set();       // keys of saved films, persisted via window.storage
+  let currentSort = "rating";      // "rating" | "year" | "title"
+  let currentView = { type: "none", key: null }; // tracks what's on screen so we can re-render after sort/watchlist changes
+  let currentUser = null;          // { email } once signed in, else null
+
+  function filmKey(film){
+    return `${film.title}__${film.year}`;
+  }
+
+  // ---------- watchlist persistence ----------
+  // Signed-out visitors get a local, browser-only list ("watchlist").
+  // Signed-in visitors get a list keyed to their email in shared storage,
+  // so the same account sees the same list on any device.
+  function watchlistStorageKey(){
+    return currentUser ? `watchlist:${currentUser.email}` : "watchlist";
+  }
+  function watchlistIsShared(){
+    return !!currentUser;
+  }
+
+  async function loadWatchlist(){
+    try{
+      const result = await window.storage.get(watchlistStorageKey(), watchlistIsShared());
+      if (result && result.value){
+        const saved = JSON.parse(result.value);
+        watchlist = Array.isArray(saved) ? new Set(saved) : new Set();
+      } else {
+        watchlist = new Set();
+      }
+    }catch(err){
+      // no saved watchlist yet for this key — start empty
+      watchlist = new Set();
+    }
+    updateWatchlistCount();
+    if (currentView.type === "genre") render(currentView.key, { silent: true });
+    else if (currentView.type === "watchlist") renderWatchlist({ silent: true });
+  }
+
+  async function persistWatchlist(){
+    try{
+      await window.storage.set(watchlistStorageKey(), JSON.stringify([...watchlist]), watchlistIsShared());
+    }catch(err){
+      // storage unavailable — watchlist still works for this session
+    }
+  }
+
+  // ---------- session persistence ----------
+  async function loadSession(){
+    try{
+      const result = await window.storage.get("session", false);
+      if (result && result.value){
+        const saved = JSON.parse(result.value);
+        if (saved && saved.email) currentUser = saved;
+      }
+    }catch(err){
+      // no saved session — stay signed out
+    }
+  }
+
+  async function persistSession(){
+    try{
+      if (currentUser){
+        await window.storage.set("session", JSON.stringify(currentUser), false);
+      } else {
+        await window.storage.delete("session", false);
+      }
+    }catch(err){
+      // storage unavailable — session still works for this tab
+    }
+  }
+
+  function updateWatchlistCount(){
+    const n = watchlist.size;
+    if (wlCountEl) wlCountEl.textContent = n;
+    if (miniWlCountEl) miniWlCountEl.textContent = n ? `My List (${n})` : "My List";
+  }
+
+  let toastTimer = null;
+  function showToast(message){
+    toastTextEl.textContent = message;
+    toastEl.classList.add("visible");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toastEl.classList.remove("visible"), 1800);
+  }
+
+  function toggleWatchlist(key, film, btnEl){
+    const isSaved = watchlist.has(key);
+    if (isSaved){
+      watchlist.delete(key);
+    } else {
+      watchlist.add(key);
+    }
+    persistWatchlist();
+    updateWatchlistCount();
+
+    document.querySelectorAll(`.heart-btn[data-key="${CSS.escape(key)}"]`).forEach(btn => {
+      btn.classList.toggle("active", !isSaved);
+      btn.setAttribute("aria-pressed", String(!isSaved));
+      btn.setAttribute("aria-label", !isSaved ? "Remove from My List" : "Add to My List");
+    });
+    if (btnEl){
+      btnEl.classList.remove("pulse");
+      void btnEl.offsetWidth; // restart animation
+      btnEl.classList.add("pulse");
+    }
+    showToast(!isSaved ? `Added "${film.title}" to My List` : `Removed "${film.title}" from My List`);
+
+    // if we're currently viewing the watchlist itself, re-render so removals disappear live
+    if (currentView.type === "watchlist") renderWatchlist();
+  }
+
+  function starIcon(){
+    return '<svg viewBox="0 0 24 24"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7-6.2-3.8-6.2 3.8 1.6-7L2 9.2l7.1-.6z"/></svg>';
+  }
+  function heartIcon(){
+    return '<svg viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-10-9.2C.5 8.4 2.3 5 6 5c2.1 0 3.6 1.2 4.5 2.6C11.4 6.2 12.9 5 15 5c3.7 0 5.5 3.4 4 6.8C19.5 16.4 12 21 12 21z"/></svg>';
+  }
+  function filmIcon(){
+    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="1"/><path d="M7 4v16M17 4v16M3 9h4M17 9h4M3 15h4M17 15h4"/></svg>';
+  }
+  function infoIcon(){
+    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8v.01"/></svg>';
+  }
+  function playIcon(){
+    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M10 8.5l6 3.5-6 3.5v-7z" fill="currentColor" stroke="none"/></svg>';
+  }
+
+  const POSTER_PALETTES = [
+    ["#3b1f5c", "#8a3fa3"],
+    ["#7a1620", "#c94b4b"],
+    ["#1f4b5c", "#2f9db3"],
+    ["#5c3d1f", "#d69a4b"],
+    ["#1f5c3d", "#2fb38a"],
+    ["#5c1f3d", "#d64b8c"],
+    ["#1f2f5c", "#4b6fd6"],
+    ["#4a3d0f", "#d6b34b"]
+  ];
+
+  function hashString(str){
+    let h = 0;
+    for (let i = 0; i < str.length; i++){
+      h = (h * 31 + str.charCodeAt(i)) >>> 0;
+    }
+    return h;
+  }
+
+  function posterStyle(title){
+    const [a, b] = POSTER_PALETTES[hashString(title) % POSTER_PALETTES.length];
+    return `background:linear-gradient(160deg, ${a}, ${b});`;
+  }
+
+  function initials(title){
+    const words = title.replace(/^(The|A|An)\s+/i, "").split(/[\s:]+/).filter(Boolean);
+    return (words[0] ? words[0][0] : title[0]).toUpperCase();
+  }
+
+  // Build reliable, always-valid links: an IMDb search for the exact
+  // title+year (opens the real listing with poster, cast, trailer) and
+  // a YouTube search for "<title> <year> official trailer".
+  function imdbSearchUrl(title, year){
+    const q = encodeURIComponent(`${title} ${year}`);
+    return `https://www.imdb.com/find/?q=${q}&s=tt&ttype=ft`;
+  }
+  function trailerSearchUrl(title, year){
+    const q = encodeURIComponent(`${title} ${year} official trailer`);
+    return `https://www.youtube.com/results?search_query=${q}`;
+  }
+  // Legal "where to watch" lookup via JustWatch (aggregates Netflix,
+  // Prime, Disney+, etc. for the exact title) — no piracy sources.
+  function watchSearchUrl(title){
+    const q = encodeURIComponent(title);
+    return `https://www.justwatch.com/us/search?q=${q}`;
+  }
+
+  function buildCard(film, rank, delay){
+    const imdb = imdbSearchUrl(film.title, film.year);
+    const trailer = trailerSearchUrl(film.title, film.year);
+    const watch = watchSearchUrl(film.title);
+    const key = filmKey(film);
+    const isSaved = watchlist.has(key);
+    return `
+      <article class="ticket" style="animation-delay:${delay}s" data-key="${key}">
+        <a class="poster" href="${imdb}" target="_blank" rel="noopener" style="${posterStyle(film.title)}" title="View ${film.title} on IMDb">
+          <span class="rank-badge">${rank}</span>
+          <span class="poster-initial">${initials(film.title)}</span>
+        </a>
+        <button class="heart-btn${isSaved ? " active" : ""}" data-key="${key}" type="button" aria-pressed="${isSaved}" aria-label="${isSaved ? "Remove from My List" : "Add to My List"}">
+          ${heartIcon()}
+        </button>
+        <div class="body">
+          <div class="top-row">
+            <h3><a href="${imdb}" target="_blank" rel="noopener">${film.title}</a></h3>
+            <span class="year">${film.year}</span>
+          </div>
+          <span class="rating">${starIcon()} ${film.rating.toFixed(1)}</span>
+          <p class="note">${film.note}</p>
+          <div class="link-row">
+            <a class="link-btn trailer" href="${trailer}" target="_blank" rel="noopener">${filmIcon()} Trailer</a>
+            <a class="link-btn imdb" href="${imdb}" target="_blank" rel="noopener">${infoIcon()} Details</a>
+            <a class="link-btn watch" href="${watch}" target="_blank" rel="noopener">${playIcon()} Watch</a>
+          </div>
+        </div>
+      </article>`;
+  }
+
+  function sortFilms(list, sortKey){
+    const copy = [...list];
+    if (sortKey === "year"){
+      copy.sort((a, b) => b.year - a.year || b.rating - a.rating);
+    } else if (sortKey === "title"){
+      copy.sort((a, b) => a.title.localeCompare(b.title));
+    } else {
+      copy.sort((a, b) => b.rating - a.rating || a.title.localeCompare(b.title));
+    }
+    return copy;
+  }
+
+  function paintGrid(list, highlightKey){
+    resultsBody.innerHTML = '<div class="grid">' +
+      list.map((film, i) => buildCard(film, i + 1, i * 0.04)).join("") +
+      '</div>';
+    attachCardListeners();
+    if (highlightKey){
+      const card = resultsBody.querySelector(`.ticket[data-key="${CSS.escape(highlightKey)}"]`);
+      if (card){
+        card.classList.add("highlight");
+        setTimeout(() => card.classList.remove("highlight"), 1700);
+      }
+    }
+  }
+
+  function attachCardListeners(){
+    resultsBody.querySelectorAll(".heart-btn").forEach(btn => {
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const key = btn.dataset.key;
+        const film = ALL_FILMS.find(f => filmKey(f) === key);
+        if (film) toggleWatchlist(key, film, btn);
+      });
+    });
+  }
+
+  function updateSortUI(){
+    sortControl.querySelectorAll(".sort-btn").forEach(b => {
+      b.classList.toggle("active", b.dataset.sort === currentSort);
+    });
+  }
+
+  function render(genreKey, opts){
+    opts = opts || {};
+    const genre = DATA[genreKey];
+    const ranked = sortFilms(genre.films, currentSort);
+
+    currentView = { type: "genre", key: genreKey };
+    resultsLabel.textContent = "Top 60";
+    resultsTitle.textContent = "Top 60 " + genre.label + " Movies";
+    resultsCount.textContent = ranked.length + " films";
+    sortControl.hidden = false;
+    updateSortUI();
+
+    paintGrid(ranked, opts.highlightKey);
+
+    buttons.forEach(b => b.classList.toggle("active", b.dataset.genre === genreKey));
+    syncMiniNav(genreKey);
+    if (!opts.silent) resultsSection.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function renderWatchlist(opts){
+    opts = opts || {};
+    currentView = { type: "watchlist", key: null };
+    const saved = ALL_FILMS.filter(f => watchlist.has(filmKey(f)));
+    const ranked = sortFilms(saved, currentSort);
+
+    resultsLabel.textContent = "Saved";
+    resultsTitle.textContent = "My List";
+    resultsCount.textContent = ranked.length + (ranked.length === 1 ? " film" : " films");
+    sortControl.hidden = ranked.length === 0;
+    updateSortUI();
+
+    if (ranked.length === 0){
+      resultsBody.innerHTML = '<p class="placeholder">Nothing saved yet — tap the heart on any card to add it here.</p>';
+    } else {
+      paintGrid(ranked, opts.highlightKey);
+    }
+
+    buttons.forEach(b => b.classList.toggle("active", b.dataset.genre === "watchlist"));
+    syncMiniNav("watchlist");
+    if (!opts.silent) resultsSection.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  const searchInput = document.getElementById("search-input");
+  const ALL_FILMS = Object.values(DATA).flatMap(g => g.films.map(f => ({ ...f, genreLabel: g.label })));
+
+  function runSearch(query){
+    const q = query.trim().toLowerCase();
+    buttons.forEach(b => b.classList.remove("active"));
+
+    if (!q){
+      currentView = { type: "none", key: null };
+      resultsLabel.textContent = "Top 60";
+      resultsTitle.textContent = "Pick a genre above";
+      resultsCount.textContent = "";
+      sortControl.hidden = true;
+      resultsBody.innerHTML = '<p class="placeholder">Your list will appear here, ranked highest IMDb rating first.</p>';
+      syncMiniNav(null);
+      return;
+    }
+
+    currentView = { type: "search", key: query };
+    syncMiniNav(null);
+    const matches = sortFilms(ALL_FILMS.filter(f => f.title.toLowerCase().includes(q)), currentSort);
+
+    resultsLabel.textContent = "Search";
+    resultsTitle.textContent = `Search: "${query.trim()}"`;
+    sortControl.hidden = matches.length === 0;
+    updateSortUI();
+
+    if (matches.length === 0){
+      resultsCount.textContent = "0 films";
+      resultsBody.innerHTML = '<p class="placeholder">No result found. Try a different title.</p>';
+      return;
+    }
+
+    resultsCount.textContent = matches.length + (matches.length === 1 ? " film" : " films");
+    paintGrid(matches);
+    resultsSection.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  searchInput.addEventListener("input", (e) => runSearch(e.target.value));
+
+  buttons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      searchInput.value = "";
+      if (btn.dataset.genre === "watchlist") renderWatchlist();
+      else render(btn.dataset.genre);
+    });
+  });
+
+  sortControl.addEventListener("click", (e) => {
+    const btn = e.target.closest(".sort-btn");
+    if (!btn) return;
+    currentSort = btn.dataset.sort;
+    updateSortUI();
+    if (currentView.type === "genre") render(currentView.key, { silent: true });
+    else if (currentView.type === "watchlist") renderWatchlist({ silent: true });
+    else if (currentView.type === "search") runSearch(currentView.key);
+  });
+
+  // ---------- surprise me ----------
+  const surpriseBtn = document.getElementById("surprise-btn");
+  surpriseBtn.addEventListener("click", () => {
+    const pick = ALL_FILMS[Math.floor(Math.random() * ALL_FILMS.length)];
+    surpriseBtn.classList.add("spinning");
+    setTimeout(() => surpriseBtn.classList.remove("spinning"), 500);
+    searchInput.value = "";
+
+    const genreKey = Object.keys(DATA).find(k => DATA[k].films.some(f => filmKey(f) === filmKey(pick)));
+    render(genreKey, { highlightKey: filmKey(pick) });
+  });
+
+  // ---------- sticky mini nav ----------
+  const miniNav = document.getElementById("mini-nav");
+  const miniGenres = document.getElementById("mini-genres");
+  const miniTitle = document.getElementById("mini-title");
+  const miniWatchlistBtn = document.getElementById("mini-watchlist-btn");
+
+  Object.keys(DATA).forEach(key => {
+    const b = document.createElement("button");
+    b.className = "mini-btn";
+    b.dataset.genre = key;
+    b.textContent = DATA[key].label;
+    b.addEventListener("click", () => { searchInput.value = ""; render(key); });
+    miniGenres.appendChild(b);
+  });
+
+  function syncMiniNav(activeKey){
+    miniGenres.querySelectorAll(".mini-btn").forEach(b => {
+      b.classList.toggle("active", b.dataset.genre === activeKey);
+    });
+    miniWatchlistBtn.classList.toggle("active", activeKey === "watchlist");
+  }
+
+  miniTitle.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
+  miniWatchlistBtn.addEventListener("click", () => { searchInput.value = ""; renderWatchlist(); });
+
+  let lastScrollShow = false;
+  window.addEventListener("scroll", () => {
+    const show = window.scrollY > window.innerHeight * 0.7;
+    if (show !== lastScrollShow){
+      miniNav.classList.toggle("visible", show);
+      lastScrollShow = show;
+    }
+  }, { passive: true });
+
+  // ---------- account / sign-in ----------
+  const accountCorner = document.getElementById("account-corner");
+  const accountBtn = document.getElementById("account-btn");
+  const accountDropdown = document.getElementById("account-dropdown");
+  const accountLabel = document.getElementById("account-label");
+  const accountAvatar = document.getElementById("account-avatar");
+  const accountDropdownEmail = document.getElementById("account-dropdown-email");
+  const signoutBtn = document.getElementById("signout-btn");
+
+  const authOverlay = document.getElementById("auth-overlay");
+  const authClose = document.getElementById("auth-close");
+  const googleBtn = document.getElementById("google-btn");
+  const emailForm = document.getElementById("email-form");
+  const emailInput = document.getElementById("email-input");
+
+  const PERSON_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg>';
+
+  function openAuthModal(){
+    authOverlay.hidden = false;
+    document.body.style.overflow = "hidden";
+    setTimeout(() => emailInput.focus(), 60);
+  }
+  function closeAuthModal(){
+    authOverlay.hidden = true;
+    document.body.style.overflow = "";
+    emailForm.reset();
+  }
+
+  function updateAccountUI(){
+    if (currentUser){
+      accountAvatar.textContent = currentUser.email[0].toUpperCase();
+      accountAvatar.classList.add("has-initial");
+      accountLabel.textContent = currentUser.email.split("@")[0];
+      accountDropdownEmail.textContent = currentUser.email;
+    } else {
+      accountAvatar.innerHTML = PERSON_ICON;
+      accountAvatar.classList.remove("has-initial");
+      accountLabel.textContent = "Sign In";
+      accountDropdownEmail.textContent = "";
+    }
+  }
+
+  async function signIn(email){
+    currentUser = { email };
+    await persistSession();
+    updateAccountUI();
+    await loadWatchlist();
+    showToast(`Signed in as ${email}`);
+  }
+
+  async function signOut(){
+    currentUser = null;
+    await persistSession();
+    updateAccountUI();
+    await loadWatchlist();
+    showToast("Signed out");
+  }
+
+  accountBtn.addEventListener("click", () => {
+    if (currentUser){
+      const willShow = accountDropdown.hidden;
+      accountDropdown.hidden = !willShow;
+      accountBtn.setAttribute("aria-expanded", String(willShow));
+    } else {
+      openAuthModal();
+    }
+  });
+
+  document.addEventListener("click", (e) => {
+    if (!accountDropdown.hidden && !accountCorner.contains(e.target)){
+      accountDropdown.hidden = true;
+      accountBtn.setAttribute("aria-expanded", "false");
+    }
+  });
+
+  authClose.addEventListener("click", closeAuthModal);
+  authOverlay.addEventListener("click", (e) => { if (e.target === authOverlay) closeAuthModal(); });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape"){
+      if (!authOverlay.hidden) closeAuthModal();
+      if (!accountDropdown.hidden){ accountDropdown.hidden = true; accountBtn.setAttribute("aria-expanded", "false"); }
+    }
+  });
+
+  googleBtn.addEventListener("click", () => {
+    emailInput.placeholder = "you@gmail.com";
+    emailInput.focus();
+    showToast("This demo isn't connected to Google — sign in with any email below");
+  });
+
+  emailForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const email = emailInput.value.trim().toLowerCase();
+    if (!email || !emailInput.checkValidity()) { emailInput.reportValidity(); return; }
+    await signIn(email);
+    closeAuthModal();
+  });
+
+  signoutBtn.addEventListener("click", async () => {
+    accountDropdown.hidden = true;
+    accountBtn.setAttribute("aria-expanded", "false");
+    await signOut();
+  });
+
+  // ---------- init ----------
+  async function init(){
+    await loadSession();
+    updateAccountUI();
+    await loadWatchlist();
+  }
+  init();
+</script>
+
+</body>
+</html>
